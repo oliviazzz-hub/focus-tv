@@ -1,0 +1,80 @@
+/* 全局重置:大多数浏览器默认给标题、段落等元素加了margin,这行统一清零,方便我们自己控制间距 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* 它改变了浏览器计算宽度的方式,让 padding 和 border 不会"额外撑大"你设定的宽度 */
+}
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+  background-color: #f4f4f6;
+  color: #222;
+  padding: 24px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* main 是我们的弹性容器,子元素(三个section)会横向排列 */
+main {
+  display: flex;
+  gap: 16px; /*gap: 16px:直接给 flex 容器设置子元素之间的间距,
+  不需要你再手动给每个 section 加 margin, 这是比较新但已经广泛支持的便捷写法。*/
+}
+
+/* 每个计时器区块 */
+.timer {
+  flex: 1;
+  /*flex = "我在容器里, 愿意平均分配剩余空间"
+  三个 section 都写 flex: 1, 它们就会平分 main 的宽度, 得到"大致均分页面"效果。*/
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.timer h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+  color: #555;
+}
+
+.timer-display {
+  font-size: 36px;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;  /*让数字字体宽度统一(等宽数字)*/
+  margin-bottom: 20px;
+}
+
+.btn-start {
+  padding: 10px 32px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #4a7cff;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-start:hover {
+  background-color: #3a63d9;
+}
+
+footer {
+  text-align: center;
+  margin-top: 32px;
+}
+
+#btn-sleep {
+  padding: 8px 20px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #777;
+  cursor: pointer;
+}
