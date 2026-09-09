@@ -60,7 +60,7 @@ main {
   cursor: pointer;
 }
 
-.btn-start:hover {
+.btn-start:hover { /*伪类选择器 鼠标悬停时变色*/
   background-color: #3a63d9;
 }
 
