@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>FocusTV</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
 </head>
 
 <body>
@@ -40,7 +41,10 @@
     <button id="btn-sleep">睡眠</button>
   </footer>
 
+  <!--手动把链接.js放在<body>部分最末尾可以避免html还未加载好就试图用js操作。
+  更稳妥的方法则是在.js里面直接设置等待收到html加载好信号再执行。
   <script src="script.js"></script>
+  -->
 </body>
 
 </html>
