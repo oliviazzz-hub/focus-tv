@@ -28,7 +28,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const tier = timerSection.dataset.tier;  /* 这个timer的data-tier 
             console.log(`第 ${tier} 档计时器的开始按钮被点击了`);
         });
-    });*/
+    });q*/
 
     const timerSections = document.querySelectorAll(".timer");  //所有timer类的对象组成一个列表
 
@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const h = String(Math.floor(state.elapsedSeconds / 3600)).padStart(2, "0");
             const m = String(Math.floor((state.elapsedSeconds % 3600) / 60)).padStart(2, "0");
             const s = String(state.elapsedSeconds % 60).padStart(2, "0");  //左侧补0至两位数字
-            display.textContent = `${h}:${m}:${s}`;  //textContent是内置属性不是自定义（对吧
+            display.textContent = `${h}:${m}:${s}`;  //textContent是内置属性不是自定义
         }
 
         // 按钮渲染。计时器状态分类->按钮对应显示。
