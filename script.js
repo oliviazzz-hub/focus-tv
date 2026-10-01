@@ -30,19 +30,19 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });q*/
 
-    const timerSections = document.querySelectorAll(".timer");  //所有timer类的对象组成一个列表
+    const timerSections = document.querySelectorAll(".timer");  // 所有timer类的对象组成一个列表
 
-    timerSections.forEach((section) => {  //timerSections列表的所有元素批量操作（每个被命名为一个section）
-        //简称一些属性
+    timerSections.forEach((section) => {  // timerSections列表的所有元素批量操作（每个被命名为一个section）
+        // 简称一些属性
         const tier = section.dataset.tier;
-        const display = section.querySelector(".timer-display");  //这是一个文字类，<p>那种
+        const display = section.querySelector(".timer-display");  // 这是一个文字类，<p>那种
         const controls = section.querySelector(".timer-controls");  
 
         // 每个计时器自己的状态,存在一个对象里
         const state = {
             status: "idle", // idle / running / paused
             elapsedSeconds: 0,
-            intervalId: null, //找到上一个在用的计时器
+            intervalId: null, // 找到上一个在用的计时器
         };
 
         // “流逝秒数”->时钟显示。
@@ -50,7 +50,7 @@ window.addEventListener("DOMContentLoaded", () => {
             const h = String(Math.floor(state.elapsedSeconds / 3600)).padStart(2, "0");
             const m = String(Math.floor((state.elapsedSeconds % 3600) / 60)).padStart(2, "0");
             const s = String(state.elapsedSeconds % 60).padStart(2, "0");  //左侧补0至两位数字
-            display.textContent = `${h}:${m}:${s}`;  //textContent是内置属性不是自定义
+            display.textContent = `${h}:${m}:${s}`;  // textContent是内置属性不是自定义
         }
 
         // 按钮渲染。计时器状态分类->按钮对应显示。
@@ -71,27 +71,53 @@ window.addEventListener("DOMContentLoaded", () => {
         //以下开始做状态转移所需函数
 
         function startTimer() {
-            state.status = "running";  //覆盖状态
-            state.intervalId = setInterval(() => {  //java内置函数，定时（1000ms）重复执行
+            if (state.status === "idle") {
+                state.startTimestamp = new Date().toISOString();  
+                // 创建一个"当前时间"的 Date 对象，再用 .toISOString() 把它转换成 ISO 8601 格式字符串
+            }
+            state.status = "running";  // 覆盖状态
+            state.intervalId = setInterval(() => {  // java内置函数，定时（1000ms）重复执行
                 state.elapsedSeconds++;
-                updateDisplay();  //直接依赖于elapsedSeconds
+                updateDisplay();  // 直接依赖于elapsedSeconds
             }, 1000);
             renderButtons();
         }
 
         function pauseTimer() {
             state.status = "paused";
-            clearInterval(state.intervalId);  //暂停该setInterval()函数的进程，但不清空。
+            clearInterval(state.intervalId);  // 暂停该setInterval()函数的进程，但不清空。
             renderButtons();
         }
 
         function resumeTimer() {
-            startTimer();  //暂时，“继续”的功能和从零“开始”没有区别。
+            startTimer();  // 暂时，“继续”的功能和从零“开始”没有区别。
         }
 
         function endTimer() {
-            console.log(`第 ${tier} 档计时结束,共记录 ${state.elapsedSeconds} 秒`);  //控制台打印
-            state.status = "idle";  //重置到idle态
+            const session = {
+                id: "session-" + Date.now(),  // 内置方法，返回"从 1970 年 1 月 1 日到现在，经过的毫秒数"
+                tier: tier,
+                startTime: state.startTimestamp,
+                endTime: new Date().toISOString(),  // 和startTime一样实时创建，不过它俩创立的时间不一样
+                totalTime: state.elapsedSeconds,
+                blankTime: 0,  // 直接创立的原始session是没有空白段落的
+                tag: null,
+                note: "",
+                dayId: null,
+            };
+
+            const sessions = JSON.parse(localStorage.getItem("sessions") || "[]");
+            // JSON.parse: Converts a JavaScript Object Notation (JSON) string into an object.
+            // 如果 getItem 返回了东西就用那个，
+            // 如果返回的是 null（比如你是第一次用这个工具，之前从没存过任何 session），就用一个空数组的字符串 "[]" 代替。
+            sessions.push(session);
+            localStorage.setItem("sessions", JSON.stringify(sessions));
+            // JSON.stringify： Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+
+            console.log("已保存一条记录：", session);
+            console.log("当前所有记录：", sessions);
+
+            state.status = "idle";
             state.elapsedSeconds = 0;
             updateDisplay();
             renderButtons();
