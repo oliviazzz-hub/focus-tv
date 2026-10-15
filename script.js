@@ -30,6 +30,95 @@ window.addEventListener("DOMContentLoaded", () => {
         });
     });q*/
 
+    // 【10.15 新增：今日记录】这一块放在原来的 DOMContentLoaded 回调内部。
+    const recordsBody = document.querySelector("#today-records-body");
+    const recordsMessage = document.querySelector("#records-message");
+    const recordsTable = document.querySelector("#records-table-wrapper");
+    const tierNames = {
+        "1": "学习 / 科研",
+        "2": "生活 / 全面发展",
+        "3": "放空 / 休息",
+    };
+
+    // 按浏览器的本地年月日判断“今天”，不直接截取 ISO 字符串的 UTC 日期。
+    function getLocalDateKey(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
+    // 只用于记录列表；保留原计时器的 updateDisplay() 及其注释。
+    function formatSessionDuration(seconds) {
+        const h = String(Math.floor(seconds / 3600)).padStart(2, "0");
+        const m = String(Math.floor((seconds % 3600) / 60)).padStart(2, "0");
+        const s = String(seconds % 60).padStart(2, "0");
+        return `${h}:${m}:${s}`;
+    }
+
+    function renderTodaySessions() {
+        // 每次先清空页面旧行；这里只修改显示，不修改存储中的记录。
+        recordsBody.textContent = "";
+        recordsTable.hidden = true;
+        recordsMessage.hidden = false;
+        recordsMessage.textContent = "今天还没有记录，完成一次计时后会显示在这里。";
+
+        try {
+            // 读取原来的 sessions 键；没有记录时使用空数组。
+            const sessions = JSON.parse(localStorage.getItem("sessions") || "[]");
+            if (!Array.isArray(sessions)) {
+                throw new Error("sessions 应当是数组");
+            }
+
+            // 按开始时间归属日期；跨午夜的记录仍属于开始的那一天。
+            const today = getLocalDateKey(new Date());
+            const todaySessions = sessions.filter((session) => {
+                // 不完整的记录不显示，但不删除或覆盖它们。
+                if (!session || typeof session.startTime !== "string") return false;
+                const start = new Date(session.startTime);
+                return !Number.isNaN(start.getTime())
+                    && Number.isInteger(session.totalTime)
+                    && session.totalTime >= 0
+                    && getLocalDateKey(start) === today;
+            });
+
+            // filter 得到新数组；排序只影响显示，最新开始的记录在前。
+            todaySessions.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+            if (todaySessions.length === 0) return;
+
+            todaySessions.forEach((session) => {
+                const row = document.createElement("tr");
+                const start = new Date(session.startTime);
+                const startText = [start.getHours(), start.getMinutes(), start.getSeconds()]
+                    .map((value) => String(value).padStart(2, "0")).join(":");
+                const values = [
+                    tierNames[session.tier] || "未知档位",
+                    startText,
+                    formatSessionDuration(session.totalTime),
+                ];
+
+                // 每条记录生成一行，每个值生成一个单元格。
+                values.forEach((value) => {
+                    const cell = document.createElement("td");
+                    cell.textContent = value; // 作为文字显示，不当作 HTML 执行。
+                    row.appendChild(cell);
+                });
+                recordsBody.appendChild(row);
+            });
+
+            recordsMessage.hidden = true;
+            recordsTable.hidden = false;
+        } catch (error) {
+            // 只处理列表读取失败，不改写原计时器的保存流程。
+            recordsMessage.textContent = "暂时无法读取记录，请检查浏览器存储中的 sessions。";
+            console.error("读取今日记录失败：", error);
+        }
+    }
+
+    // 页面加载后显示已有记录；刷新页面时也会执行。
+    renderTodaySessions();
+    // 【10.15 新增：今日记录结束】下面继续保留原来的计时器代码。
+
     const timerSections = document.querySelectorAll(".timer");  // 所有timer类的对象组成一个列表
 
     timerSections.forEach((section) => {  // timerSections列表的所有元素批量操作（每个被命名为一个section）
@@ -113,6 +202,7 @@ window.addEventListener("DOMContentLoaded", () => {
             sessions.push(session);
             localStorage.setItem("sessions", JSON.stringify(sessions));
             // JSON.stringify： Converts a JavaScript value to a JavaScript Object Notation (JSON) string.
+            renderTodaySessions(); // 【10.15新增】保存成功后立即刷新今日记录列表。
 
             console.log("已保存一条记录：", session);
             console.log("当前所有记录：", sessions);

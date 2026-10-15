@@ -37,6 +37,28 @@
     </section>
   </main>
 
+    <!-- 【10.15 新增：今日记录】放在原来的 </main> 后、<footer> 前。 -->
+  <section class="today-records" aria-labelledby="today-records-title">
+    <h2 id="today-records-title">今日记录</h2>
+    <p id="records-message" role="status">今天还没有记录，完成一次计时后会显示在这里。</p>
+
+    <!-- 没有记录时隐藏表格；有记录时由 JS 显示。 -->
+    <div id="records-table-wrapper" class="records-table-wrapper" hidden>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">档位</th>
+            <th scope="col">开始时间</th>
+            <th scope="col">累计计时时长</th>
+          </tr>
+        </thead>
+        <!-- JS 把每条今天的记录添加成一行。 -->
+        <tbody id="today-records-body"></tbody>
+      </table>
+    </div>
+  </section>
+  <!-- 【10.15 新增：今日记录结束】 -->
+
   <footer>
     <button id="btn-sleep">睡眠</button>
   </footer>

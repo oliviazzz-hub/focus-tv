@@ -109,3 +109,49 @@ footer {
   color: #777;
   cursor: pointer;
 }
+
+
+/* 【10.15 新增：今日记录】追加到原 style.css 末尾，不改原来的样式。 */
+.today-records {
+  margin-top: 24px;
+  padding: 24px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.today-records h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+#records-message {
+  color: #777;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 只让记录表格在需要时横向滚动，不改三个计时器的排列。 */
+.records-table-wrapper {
+  overflow-x: auto;
+}
+
+.today-records table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.today-records th,
+.today-records td {
+  padding: 12px 8px;
+  border-bottom: 1px solid #eee;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.today-records th {
+  color: #555;
+  font-size: 14px;
+}
+/* 【10.15 新增：今日记录结束】 */
