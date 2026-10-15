@@ -42,6 +42,20 @@
     <h2 id="today-records-title">今日记录</h2>
     <p id="records-message" role="status">今天还没有记录，完成一次计时后会显示在这里。</p>
 
+    <!-- 【今日统计】与下方明细使用同一批今日记录，暂按自然日统计。 -->
+    <div id="today-summary" class="today-summary" hidden>
+      <h3>今日时长统计（暂按自然日）</h3>
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">档位</th>
+            <th scope="col">累计计时时长</th>
+          </tr>
+        </thead>
+        <tbody id="today-summary-body"></tbody>
+      </table>
+    </div>
+
     <!-- 没有记录时隐藏表格；有记录时由 JS 显示。 -->
     <div id="records-table-wrapper" class="records-table-wrapper" hidden>
       <table>

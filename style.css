@@ -154,4 +154,15 @@ footer {
   color: #555;
   font-size: 14px;
 }
+
+/* 只调整统计区域与下面明细表的间距。 */
+.today-summary {
+  margin-bottom: 16px;
+}
+
+.today-summary h3 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
 /* 【10.15 新增：今日记录结束】 */

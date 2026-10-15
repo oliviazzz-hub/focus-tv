@@ -1,4 +1,3 @@
-
 /*
 const startButtons = document.querySelectorAll(".btn-start");
 /* document指代整个html页面；
@@ -34,6 +33,11 @@ window.addEventListener("DOMContentLoaded", () => {
     const recordsBody = document.querySelector("#today-records-body");
     const recordsMessage = document.querySelector("#records-message");
     const recordsTable = document.querySelector("#records-table-wrapper");
+
+    // 【修复】移到外层并提前初始化，让列表与统计函数都能访问。
+    // 取得统计区域，以及用于放置统计行的表格主体。
+    const summarySection = document.querySelector("#today-summary");
+    const summaryBody = document.querySelector("#today-summary-body");
     const tierNames = {
         "1": "学习 / 科研",
         "2": "生活 / 全面发展",
@@ -56,12 +60,41 @@ window.addEventListener("DOMContentLoaded", () => {
         return `${h}:${m}:${s}`;
     }
 
+    // 【10.15新增】只汇总传进来的今日记录，不读取全部历史，也不修改 sessions。
+    function renderTodaySummary(todaySessions) {
+        summaryBody.textContent = ""; // 每次重新生成，避免重复追加。
+
+        Object.keys(tierNames).forEach((tier) => {
+            let totalSeconds = 0;
+
+            // 只把属于当前档位的时长相加；没有记录时保持为零。
+            todaySessions.forEach((session) => {
+                if (String(session.tier) === tier) {
+                    totalSeconds += session.totalTime;
+                }
+            });
+
+            const row = document.createElement("tr");
+            const values = [tierNames[tier], formatSessionDuration(totalSeconds)];
+            values.forEach((value) => {
+                const cell = document.createElement("td");
+                cell.textContent = value;
+                row.appendChild(cell);
+            });
+            summaryBody.appendChild(row);
+        });
+
+        summarySection.hidden = false; // 读取成功，即使没有记录也显示各档零时长。
+    }
+
     function renderTodaySessions() {
         // 每次先清空页面旧行；这里只修改显示，不修改存储中的记录。
         recordsBody.textContent = "";
         recordsTable.hidden = true;
+        summarySection.hidden = true;// 读取期间先隐藏统计；读取失败时不显示旧结果或误报为零。
         recordsMessage.hidden = false;
         recordsMessage.textContent = "今天还没有记录，完成一次计时后会显示在这里。";
+
 
         try {
             // 读取原来的 sessions 键；没有记录时使用空数组。
@@ -84,6 +117,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
             // filter 得到新数组；排序只影响显示，最新开始的记录在前。
             todaySessions.sort((a, b) => new Date(b.startTime) - new Date(a.startTime));
+            renderTodaySummary(todaySessions); //【10.15新增】复用已经按本地日期筛选、校验后的记录；放在空列表 return 之前。
             if (todaySessions.length === 0) return;
 
             todaySessions.forEach((session) => {
