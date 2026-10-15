@@ -165,4 +165,10 @@ footer {
   font-size: 16px;
 }
 
+/* 明细表标题沿用上方统计标题的字号和间距。 */
+.records-table-wrapper h3 {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
 /* 【10.15 新增：今日记录结束】 */
